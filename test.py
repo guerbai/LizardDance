@@ -1,6 +1,4 @@
 import os
 
-s = 'a'
-y = 'b/'
-z = os.path.join(y,s)
-print z
+s = 'http://www.qiushibaike.com/hot/page/1/'
+print s[:26]

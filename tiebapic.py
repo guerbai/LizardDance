@@ -4,6 +4,7 @@ import requests, json
 from bs4 import BeautifulSoup
 import os
 import urllib
+from allfiledir import allfilrdir
 
 #requests用法,一个全局的会话对象.
 s = requests.session()
@@ -28,15 +29,16 @@ def path(f, z, y):
         os.makedirs(dir_name2)
     return dir_name2
 
+#得到选择的主题，进行检测，构造主题url需要的代码。
 def check_xuanze_zhuti(xuanze_zhuti, zhuti):
     add_url = ''
     for yigezhuti in zhuti:
         if xuanze_zhuti == yigezhuti[0]:
             add_url = yigezhuti[1]
-    while add_url == '':
+    if add_url == '':
         print u'该主题不存在，请重新输入。\n'
         xuanze_zhuti = raw_input(u'请选择主题：\n').decode('utf-8')
-        add_url, xuanze_zhuti = check_xuanze_zhuti(xuanze_zhuti, zhuti)
+        check_xuanze_zhuti(xuanze_zhuti, zhuti)
     else:
         return add_url, xuanze_zhuti
 
@@ -47,10 +49,10 @@ def check_xuanze_tuce(xuanze_tuce, tuce):
         if xuanze_tuce == yigetuce[0]:
             tid = yigetuce[1]
             pe = yigetuce[2][:-1]
-    while tid == '':
+    if tid == '':
         print u'图册不存在，请重新输入。\n'
         xuanze_tuce = raw_input(u'请选择图册：\n').decode('utf-8')
-        tid, pe, xuanze_tuce = check_xuanze_tuce(xuanze_tuce, tuce)
+        check_xuanze_tuce(xuanze_tuce, tuce)
     else:
         return tid, pe, xuanze_tuce
 
@@ -108,6 +110,7 @@ def pic_download(pic_address, dir_name2):
 
 def main():
     tieba_name = raw_input(u'请输入贴吧名称：\n').decode('utf-8')
+    #构造图片区url.
     main_url = 'http://tieba.baidu.com/photo/g?kw=' + tieba_name + '&ie=utf-8'
     zhuti = get_zhuti_neirong(main_url)
     if zhuti == []:
@@ -118,6 +121,7 @@ def main():
         print yigezhuti[0] + '   ' + yigezhuti[2] + u'个图册'
     xuanze_zhuti = raw_input(u'请选择主题：\n').decode('utf-8')
     add_url, xuanze_zhuti = check_xuanze_zhuti(xuanze_zhuti, zhuti)
+    #构造主题页面url.
     zhuti_url = 'http://tieba.baidu.com/photo/g?kw=' + tieba_name + '&ie=utf-8&cat_id=' + str(add_url[10:])
     tuce = get_tuce_neirong(zhuti_url)
     # print tuce
@@ -130,7 +134,7 @@ def main():
     # print json_url
     pic_address = get_pic_address(json_url)
     # print  pic_address
-    dir_name2 = path(tieba_name, xuanze_zhuti, xuanze_tuce)
+    dir_name2 = path(allfilrdir+'/'+tieba_name, xuanze_zhuti, xuanze_tuce)
     pic_download(pic_address, dir_name2)
 
 if __name__ == '__main__':
