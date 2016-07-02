@@ -3,6 +3,7 @@
 　　博客地址在[这里](http://blog.csdn.net/lucifer_sam/article/category/6281742)。          
 　　所写爬虫主要作以下之用：
 　  
+     
  *1. 爬取韩寒博客--保存为html文件*
      
  *2. 爬取百度贴吧图片区图片--一次爬取一个图册*
