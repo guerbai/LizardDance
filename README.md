@@ -1,6 +1,6 @@
 ---
 　　<h4>这个项目是为写爬虫系列博客建立的，之前的爬虫项目太过混乱，写了博客整理并复习了一下，而且之前的是在windows7中运行的，现在改用ubuntu，移植的过程中出现了一些不一致的地方，改为在ubuntu上可以顺利运行的版本。</h4>        
-　　<h3>博客地址在[这里](https://gudabai.github.io/2016/07/10/outline/)。</h3>          
+　　<h3>博客地址在[这里](https://gudabai.github.io/categories/crawlers/)。</h3>          
 　　<h3>所写爬虫主要作以下之用：</h3>
 　  
      
