@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
+import re
 from pprint import pprint
 import requests
 
 cookies = dict(appver='2.0.2')
 headers = dict(referer="http://music.163.com")
+global failtime
+failtime = 0
+global total_song_nums
+total_song_nums = 0
 
 
 def get_singerid_from_singer(singer):
@@ -40,21 +45,33 @@ def get_songid_from_albumid(albumid):
 def get_lyric_from_songid(songid):
 	url = 'http://music.163.com/api/song/lyric?os=pc&id={}&lv=-1&kv=-1&tv=-1'.format(songid)
 	r = requests.get(url, headers=headers, cookies=cookies)
-	print r.json()['lrc']['lyric']
-	pass
+	global failtime
+	global total_song_nums
+	total_song_nums += 1
+	try:
+		text = r.json()['lrc']['lyric'].encode('utf-8')
+		textlist = text.split('\n')
+		text = '\n'.join([re.sub(r'\[.*?\]', '', i) for i in textlist])
+		return text
+	except KeyError:
+		failtime += 1
+		return ''
 
 
 def main(singer):
 	lyrics = []
 	singer_data = get_singerid_from_singer(singer)
 	albumlist = get_albumlist_from_singerid(singer_data)
-	for albumid in albumlist:
-		songids = get_songid_from_albumid(albumid['albumid'])
-		for songid in songids:
-			lyric = get_lyric_from_songid(songid)
-			print lyric
-			break
-		break
+	with open('lyric.txt', 'w') as lyricfile:
+		for albumid in albumlist:
+			songids = get_songid_from_albumid(albumid['albumid'])
+			for songid in songids:
+				lyric = get_lyric_from_songid(songid)
+				lyricfile.write(lyric)
+				print "write once."
+	print "total ", total_song_nums, 'songs.'
+	print "fail ", failtime, 'times.'
+	print "done"
 
 
 if __name__ == '__main__':
