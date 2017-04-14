@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import re
 from pprint import pprint
 import requests
@@ -62,7 +63,7 @@ def main(singer):
 	lyrics = []
 	singer_data = get_singerid_from_singer(singer)
 	albumlist = get_albumlist_from_singerid(singer_data)
-	with open('lyric.txt', 'w') as lyricfile:
+	with open(singer+'lyric.txt', 'w') as lyricfile:
 		for albumid in albumlist:
 			songids = get_songid_from_albumid(albumid['albumid'])
 			for songid in songids:
@@ -73,6 +74,23 @@ def main(singer):
 	print "fail ", failtime, 'times.'
 	print "done"
 
+def generate_ciyun_pic():
+	import matplotlib.pyplot as plt
+	from wordcloud import WordCloud
+	import jieba
+
+	text_from_file_with_apath = open('./{}lyric.txt'.format(singer), 'r').read().replace('作词', '').replace('作曲', '')
+
+	wordlist_after_jieba = jieba.cut(text_from_file_with_apath, cut_all = True)
+	wl_space_split = " ".join(wordlist_after_jieba)
+
+	my_wordcloud = WordCloud().generate(wl_space_split)
+
+	plt.imshow(my_wordcloud)
+	plt.axis("off")
+	plt.show()
 
 if __name__ == '__main__':
-	main('snh48')
+	singer = sys.argv[1]
+	# main(singer)
+	generate_ciyun_pic()
