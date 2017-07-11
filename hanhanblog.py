@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 __author__ = 'fybhp'
 
-import urllib2
-from allfiledir import allfilrdir
 import os
+import urllib2
+from common import make_file_dir
 
 links = [''] * 7
 n = 0
