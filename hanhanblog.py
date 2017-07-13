@@ -1,57 +1,54 @@
 # -*- coding:utf-8 -*-
 __author__ = 'fybhp'
 
-import os
-import urllib2
-from common import make_file_dir
+import requests
+from bs4 import BeautifulSoup
+from common import FILE_DIR, make_file_dir
 
-links = [''] * 7
-n = 0
-page = 0
+PER_PAGE = 50
+SPIDER_BASE_DIR = "/".join(__file__.split("/")[:-1]) + FILE_DIR + '/' + __file__.split("/")[-1].split(".")[0]
+URL_TEMPLATE = 'http://blog.sina.com.cn/s/articlelist_1191258123_0_{}.html'
+TOTAL_PAGE = 7
 
-while n < 7:
-    #将七页博客目录的url放入links列表中.
-    links[n] = 'http://blog.sina.com.cn/s/articlelist_1191258123_0_' + str(n + 1) + '.html'
-    n += 1
 
-while page < 7:
+def create_file_dir():
+    # 建立此脚本在file下的目录，并在其下每一页建立一个目录.
+    make_file_dir(SPIDER_BASE_DIR)
+    for i in range(TOTAL_PAGE):
+        page_file_dir = SPIDER_BASE_DIR + '/' + str(i + 1)
+        make_file_dir(page_file_dir)
 
-    # 定义要创建的目录
-    mkpath = allfilrdir + '/' + str(page + 1)
-    if not os.path.exists(mkpath):
-        print mkpath + u' 创建成功'
-        os.mkdir(mkpath)
-    else:
-        print mkpath + u' 目录已存在'
 
-    #content为博客目录页面的html代码字符串
-    content = urllib2.urlopen(links[page]).read()
-    #一页最多50篇文章,这里用了100.
-    url = [''] * 100
-    filename = [''] * 100
-    i = 0
-    #字符串的find方法抽取出博客文章的链接url.
-    set_local = content.find(r'<a title')
-    start = content.find(r'href', set_local)
-    end = content.find(r'html', start)
-    #从这个循环中出来后,url列表中有着该页面目录中所有文章的链接url.
-    while set_local != 0 and i < 100:
-        url[i] = content[start + 6:end + 4]
-        #通过find方法的第二个参数指定开始位置,使得对字符串的操作一直在往后进行.
-        set_local = content.find(r'<a title', end)
-        start = content.find(r'href', set_local)
-        end = content.find(r'html', start)
-        i += 1
-    #设定j,重新对url列表进行遍历,进行下载.
-    j = 0
-    while url[j] != '' and j < 50:
-        filename = url[j][url[j].find(r'blog_'):]
-        con = urllib2.urlopen(url[j]).read()
-        open(mkpath + '/' + filename, 'w').write(con)
-        print 'downloading', url[j]
-        j += 1
-    else:
-        print 'page' + str(page + 1) + 'ok'
-    page += 1
-else:
-    print 'all finished!'
+def generate_catalog_links():
+    return [URL_TEMPLATE.format(i + 1) for i in range(TOTAL_PAGE)]
+
+
+def get_page_blog_urls(page_url):
+    urls = []
+    content = requests.get(page_url).content
+    soup = BeautifulSoup(content, "lxml")
+    with open('1.html', 'w') as f:
+        f.write(content)
+    for i in soup.find_all("span", class_='atc_title'):
+        urls.append(i.a['href'])
+    return urls
+
+
+def download_page(page, artical_url, artical_name):
+    content = requests.get(artical_url).content
+    with open(artical_name, 'w') as f:
+        f.write(content)
+
+
+def main():
+    create_file_dir()
+    catelog_links = generate_catalog_links()
+    for index, catelog_link in enumerate(catelog_links):
+        blog_urls = get_page_blog_urls(catelog_link)
+        for artical_name, blog_url in enumerate(blog_urls):
+            download_page(index, blog_url, str(artical_name) + '.html')
+            print "download ", index, blog_url
+
+
+if __name__ == "__main__":
+    main()

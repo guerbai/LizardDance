@@ -1,8 +1,14 @@
+# -*- coding:utf-8 -*-
 import os
 
+FILE_DIR = '/file'
 
-def make_file_dir():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    all_file_dir = basedir + '/file'
-    if not os.path.exists(all_file_dir):
-        os.mkdir(all_file_dir)
+
+def make_file_dir(path):
+    if not os.path.exists(path):
+        print u"创建目录" + path
+        os.mkdir(path)
+    else:
+        print u"目录" + path + u"已存在"
+
+        # basedir = os.path.abspath(os.path.dirname(__file__))
