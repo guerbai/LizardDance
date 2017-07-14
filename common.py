@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 
-FILE_DIR = '/file'
+FILE_DIR = './file/'
 
 
 def make_file_dir(path):
