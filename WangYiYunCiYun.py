@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 import re
-from pprint import pprint
 import requests
 
 cookies = dict(appver='2.0.2')
@@ -98,5 +97,5 @@ def generate_ciyun_pic():
 
 if __name__ == '__main__':
     singer = sys.argv[1]
-    # main(singer)
-    generate_ciyun_pic()
+    main(singer)
+    # generate_ciyun_pic()
